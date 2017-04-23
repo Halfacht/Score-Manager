@@ -13,13 +13,13 @@ import com.halfachtempire.android.scoremanager.R;
 public class SetPlayerNamesAdapter extends RecyclerView.Adapter<SetPlayerNamesAdapter.SetPlayerNameViewHolder> {
 
     private Context mContext;
-    private int mCount;
+    private int mNumberItems;
 
     public SetPlayerNamesAdapter(){}
 
-    public SetPlayerNamesAdapter(Context context, int count) {
+    public SetPlayerNamesAdapter(Context context, int numberOfItems) {
         mContext = context;
-        mCount = count;
+        mNumberItems = numberOfItems;
 
     }
 
@@ -38,7 +38,7 @@ public class SetPlayerNamesAdapter extends RecyclerView.Adapter<SetPlayerNamesAd
 
     @Override
     public int getItemCount() {
-        return mCount;
+        return mNumberItems;
     }
 
     public class SetPlayerNameViewHolder extends RecyclerView.ViewHolder {
@@ -52,5 +52,4 @@ public class SetPlayerNamesAdapter extends RecyclerView.Adapter<SetPlayerNamesAd
             playerNameEditText = (EditText) itemView.findViewById(R.id.et_set_player_name);
         }
     }
-
 }

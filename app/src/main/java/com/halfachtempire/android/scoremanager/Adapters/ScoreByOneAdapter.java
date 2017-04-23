@@ -3,6 +3,7 @@ package com.halfachtempire.android.scoremanager.Adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +38,12 @@ public class ScoreByOneAdapter extends RecyclerView.Adapter<ScoreByOneAdapter.Sc
         String playerName   = mCursor.getString(mCursor.getColumnIndex(ScoreContract.ScoreEntry.COLUMN_PLAYER_NAME));
         int playerScore     = mCursor.getInt(mCursor.getColumnIndex(ScoreContract.ScoreEntry.COLUMN_PLAYER_SCORE));
 
+        Log.v("playerName and position", playerName + " " + position);
+
         // Set the TextViews to the values
         int playerNumber = position + 1;
         holder.numberTextView.setText(String.valueOf(playerNumber));
-        holder.playerNameTextView.setText(String.valueOf(playerName));
+        holder.playerNameTextView.setText(playerName);
         holder.playerScoreTextView.setText(String.valueOf(playerScore));
 
     }

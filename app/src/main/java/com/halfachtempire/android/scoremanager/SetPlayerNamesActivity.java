@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,24 +79,25 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
     }
 
     public void setPlayerNames() {
-
-        Log.v("count", numOfPlayers + "");
         List<ContentValues> list = new ArrayList<>();
-        ContentValues cv = new ContentValues();
 
         for (int i = 0; i < numOfPlayers; i++) {
+            // Get the itemView for position i then get and set playerName
             SetPlayerNamesAdapter.SetPlayerNameViewHolder viewHolder = (SetPlayerNamesAdapter.SetPlayerNameViewHolder)
                     mSetPlayerNameRecyclerView.findViewHolderForAdapterPosition(i);
             EditText playerNameEditText = (EditText) viewHolder.playerNameEditText;
             String playerName = playerNameEditText.getText().toString();
 
-            if (playerName.equals("")) {playerName = "Player x";}
-            Log.v("playername", playerName);
+            // If there wasn't a name enter give the default value
+            if (playerName.equals("")) {playerName = getString(R.string.default_player_name);}
 
+            // Add the name to a list.
+            ContentValues cv = new ContentValues();
             cv.put(ScoreContract.ScoreEntry.COLUMN_PLAYER_NAME, playerName);
             list.add(cv);
 
         }
+        // Add all the names to the database at once
         try {
             mDb.beginTransaction();
             // Clear the table
