@@ -1,7 +1,8 @@
 package com.halfachtempire.android.scoremanager.Adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,44 +13,72 @@ import com.halfachtempire.android.scoremanager.R;
 
 public class SetPlayerNamesAdapter extends RecyclerView.Adapter<SetPlayerNamesAdapter.SetPlayerNameViewHolder> {
 
-    private Context mContext;
-    private int mNumberItems;
+    public String[] mDataset;
 
-    public SetPlayerNamesAdapter(){}
-
-    public SetPlayerNamesAdapter(Context context, int numberOfItems) {
-        mContext = context;
-        mNumberItems = numberOfItems;
-
+    public SetPlayerNamesAdapter(String[] myDataset) {
+        mDataset = myDataset;
     }
 
     @Override
     public SetPlayerNameViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(mContext);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.set_player_name_list_item, parent, false);
-        return new SetPlayerNameViewHolder(view);
+        return new SetPlayerNameViewHolder(view, new MyEditTextListener());
     }
 
     @Override
     public void onBindViewHolder(SetPlayerNameViewHolder holder, int position) {
         int playerNumber = position + 1;
         holder.numberTextView.setText(String.valueOf(playerNumber));
+
+        // Update MyEditTextListener every time we bind a new item
+        // So that it knows what item in mDataset to update
+        holder.myEditTextListener.updatePosition(holder.getAdapterPosition());
+        holder.playerNameEditText.setText(mDataset[holder.getAdapterPosition()]);
     }
 
     @Override
     public int getItemCount() {
-        return mNumberItems;
+        return mDataset.length;
     }
 
-    public class SetPlayerNameViewHolder extends RecyclerView.ViewHolder {
+    public static class SetPlayerNameViewHolder extends RecyclerView.ViewHolder {
 
-        TextView numberTextView;
+        private TextView numberTextView;
         public EditText playerNameEditText;
+        public MyEditTextListener myEditTextListener;
 
-        public SetPlayerNameViewHolder(View itemView) {
+        public SetPlayerNameViewHolder(View itemView, MyEditTextListener myEditTextListener) {
             super(itemView);
-            numberTextView = (TextView) itemView.findViewById(R.id.tv_set_player_name_number);
-            playerNameEditText = (EditText) itemView.findViewById(R.id.et_set_player_name);
+
+            this.numberTextView = (TextView) itemView.findViewById(R.id.tv_set_player_name_number);
+            this.playerNameEditText = (EditText) itemView.findViewById(R.id.et_set_player_name);
+
+            this.myEditTextListener = myEditTextListener;
+            this.playerNameEditText.addTextChangedListener(myEditTextListener);
+        }
+    }
+
+    private class MyEditTextListener implements TextWatcher {
+        private int position;
+
+        public void updatePosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            mDataset[position] = s.toString();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
         }
     }
 }

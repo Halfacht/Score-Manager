@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.halfachtempire.android.scoremanager.Adapters.SetPlayerNamesAdapter;
 import com.halfachtempire.android.scoremanager.Data.ScoreContract;
@@ -25,6 +24,7 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
     private SQLiteDatabase mDb;
     private RecyclerView mSetPlayerNameRecyclerView;
     private SetPlayerNamesAdapter mAdapter;
+    public String[] mPlayerNameset;
 
     private int numOfPlayers;
 
@@ -47,10 +47,14 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
 
         // Get the number of players
         numOfPlayers = getNumOfPlayers();
+        mPlayerNameset = new String[numOfPlayers];
 
         // Set the adapter with the amount of players
-        mAdapter = new SetPlayerNamesAdapter(this, numOfPlayers);
+        mAdapter = new SetPlayerNamesAdapter((mPlayerNameset));
         mSetPlayerNameRecyclerView.setAdapter(mAdapter);
+        //mSetPlayerNameRecyclerView.setItemViewCacheSize(numOfPlayers);  // Saves the values in the EditText when scrolling.
+        //mSetPlayerNameRecyclerView.getRecycledViewPool().setMaxRecycledViews(R.id.et_set_player_name, 0);
+
     }
 
     View.OnClickListener bClickListener = new View.OnClickListener() {
@@ -80,13 +84,11 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
 
     public void setPlayerNames() {
         List<ContentValues> list = new ArrayList<>();
+        mPlayerNameset = mAdapter.mDataset;
+        String playerName;
 
         for (int i = 0; i < numOfPlayers; i++) {
-            // Get the itemView for position i then get and set playerName
-            SetPlayerNamesAdapter.SetPlayerNameViewHolder viewHolder = (SetPlayerNamesAdapter.SetPlayerNameViewHolder)
-                    mSetPlayerNameRecyclerView.findViewHolderForAdapterPosition(i);
-            EditText playerNameEditText = (EditText) viewHolder.playerNameEditText;
-            String playerName = playerNameEditText.getText().toString();
+            playerName = mPlayerNameset[i];
 
             // If there wasn't a name enter give the default value
             if (playerName.equals("")) {playerName = getString(R.string.default_player_name);}
