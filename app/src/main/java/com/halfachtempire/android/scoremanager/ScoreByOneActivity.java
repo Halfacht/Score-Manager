@@ -34,7 +34,7 @@ public class ScoreByOneActivity extends AppCompatActivity {
         Cursor cursor = getPlayerScores();
 
         // Create an adapter for that cursor to display the data and link to the RecyclerView
-        mAdapter = new ScoreByOneAdapter(this, cursor);
+        mAdapter = new ScoreByOneAdapter(cursor);
         scoreByOneRecyclerView.setAdapter(mAdapter);
     }
 

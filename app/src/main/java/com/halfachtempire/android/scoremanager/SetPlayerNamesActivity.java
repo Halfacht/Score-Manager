@@ -52,9 +52,6 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
         // Set the adapter with the amount of players
         mAdapter = new SetPlayerNamesAdapter((mPlayerNameset));
         mSetPlayerNameRecyclerView.setAdapter(mAdapter);
-        //mSetPlayerNameRecyclerView.setItemViewCacheSize(numOfPlayers);  // Saves the values in the EditText when scrolling.
-        //mSetPlayerNameRecyclerView.getRecycledViewPool().setMaxRecycledViews(R.id.et_set_player_name, 0);
-
     }
 
     View.OnClickListener bClickListener = new View.OnClickListener() {
