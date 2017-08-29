@@ -7,9 +7,23 @@
     android:padding="16dp"
     tools:context="com.halfachtempire.android.scoremanager.SetPlayerNamesActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/score_by_one_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+   <android.support.v7.widget.RecyclerView
+       android:id="@+id/score_by_one_list_view"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:paddingBottom="8dp"/>
+
+   <TextView
+       android:id="@+id/textView"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="TextView" />
+
+   <ProgressBar
+       android:id="@+id/pb_loading_indicator"
+       android:layout_width="42dp"
+       android:layout_height="42dp"
+       android:layout_gravity="center"
+       android:visibility="invisible" />
 
 </LinearLayout>

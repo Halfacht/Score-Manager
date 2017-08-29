@@ -2,9 +2,6 @@ package com.halfachtempire.android.scoremanager;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,19 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
-import com.halfachtempire.android.scoremanager.Adapters.SetPlayerNamesAdapter;
-import com.halfachtempire.android.scoremanager.Data.ScoreContract;
-import com.halfachtempire.android.scoremanager.Data.ScoreDbHelper;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.halfachtempire.android.scoremanager.adapters.SetPlayerNamesAdapter;
+import com.halfachtempire.android.scoremanager.data.ScoreContract;
 
 public class SetPlayerNamesActivity extends AppCompatActivity {
 
-    private SQLiteDatabase mDb;
-    private RecyclerView mSetPlayerNameRecyclerView;
     private SetPlayerNamesAdapter mAdapter;
-    public String[] mPlayerNameset;
+    private RecyclerView mSetPlayerNameRecyclerView;
 
     private int numOfPlayers;
 
@@ -33,6 +24,18 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_player_names);
 
+        initReferences(); // Also sets onClickListeners
+
+        // String Array to hold the Player Names
+        numOfPlayers = getNumOfPlayersFromIntent();
+
+        // Set the adapter with the amount of players
+        mAdapter = new SetPlayerNamesAdapter(getNumOfPlayersFromIntent());
+        mSetPlayerNameRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void initReferences() {
+
         // Go to the next activity when the button is clicked
         Button button = (Button) findViewById(R.id.b_post_player_names);
         button.setOnClickListener(bClickListener);
@@ -40,18 +43,6 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
         // Get a reference to the recyclerview and set the layout manager
         mSetPlayerNameRecyclerView = (RecyclerView) this.findViewById(R.id.set_players_names_list_view);
         mSetPlayerNameRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Database
-        ScoreDbHelper dbHelper = new ScoreDbHelper(this);
-        mDb = dbHelper.getWritableDatabase();
-
-        // Get the number of players
-        numOfPlayers = getNumOfPlayers();
-        mPlayerNameset = new String[numOfPlayers];
-
-        // Set the adapter with the amount of players
-        mAdapter = new SetPlayerNamesAdapter((mPlayerNameset));
-        mSetPlayerNameRecyclerView.setAdapter(mAdapter);
     }
 
     View.OnClickListener bClickListener = new View.OnClickListener() {
@@ -67,50 +58,34 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
         }
     };
 
-    public int getNumOfPlayers() {
-        numOfPlayers = 1;
-        Cursor cursor = mDb.query(
-                ScoreContract.GameEntry.TABLE_NAME,
-                null, null,  null, null, null, null
-        );
-        cursor.moveToLast();
-        numOfPlayers = cursor.getInt(cursor.getColumnIndex(ScoreContract.GameEntry.COLUMN_NUMBER_OF_PLAYERS));
+    private int getNumOfPlayersFromIntent() {
 
-        return numOfPlayers;
+        return getIntent().getIntExtra("numOfPlayers", 1);
     }
 
     public void setPlayerNames() {
-        List<ContentValues> list = new ArrayList<>();
-        mPlayerNameset = mAdapter.mDataset;
+
+        // Create a ContentValues array
+        ContentValues[] contentValuesArray = new ContentValues[numOfPlayers];
         String playerName;
 
         for (int i = 0; i < numOfPlayers; i++) {
-            playerName = mPlayerNameset[i];
+            playerName = mAdapter.mPlayerNameSet[i];
 
             // If there wasn't a name enter give the default value
-            if (playerName.equals("")) {playerName = getString(R.string.default_player_name);}
+            if (playerName.equals("")) {
+                playerName = getString(R.string.default_player_name);
+            }
 
             // Add the name to a list.
             ContentValues cv = new ContentValues();
-            cv.put(ScoreContract.ScoreEntry.COLUMN_PLAYER_NAME, playerName);
-            list.add(cv);
 
+            cv.put(ScoreContract.ScoreEntry.COLUMN_PLAYER_NAME, playerName);
+
+            contentValuesArray[i] = cv;
         }
-        // Add all the names to the database at once
-        try {
-            mDb.beginTransaction();
-            // Clear the table
-            mDb.delete(ScoreContract.ScoreEntry.TABLE_NAME, null, null);
-            // iterate through the list and add one by one
-            for (ContentValues c:list) {
-                mDb.insert(ScoreContract.ScoreEntry.TABLE_NAME, null, c);
-            }
-            mDb.setTransactionSuccessful();
-        } catch (SQLException e) {
-            // too bad
-        } finally {
-            mDb.endTransaction();
-        }
+
+        getContentResolver().bulkInsert(ScoreContract.ScoreEntry.CONTENT_URI, contentValuesArray);
 
     } // close setPlayerNames()
 }

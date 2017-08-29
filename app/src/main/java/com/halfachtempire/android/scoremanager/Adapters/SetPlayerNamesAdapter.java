@@ -1,5 +1,6 @@
-package com.halfachtempire.android.scoremanager.Adapters;
+package com.halfachtempire.android.scoremanager.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,10 +14,11 @@ import com.halfachtempire.android.scoremanager.R;
 
 public class SetPlayerNamesAdapter extends RecyclerView.Adapter<SetPlayerNamesAdapter.SetPlayerNameViewHolder> {
 
-    public String[] mDataset;
+    private Context context;
+    public String[] mPlayerNameSet;
 
-    public SetPlayerNamesAdapter(String[] myDataset) {
-        mDataset = myDataset;
+    public SetPlayerNamesAdapter(int numberOfPlayers) {
+        mPlayerNameSet = new String[numberOfPlayers];
     }
 
     @Override
@@ -34,12 +36,12 @@ public class SetPlayerNamesAdapter extends RecyclerView.Adapter<SetPlayerNamesAd
         // Update MyEditTextListener every time we bind a new item
         // So that it knows what item in mDataset to update
         holder.myEditTextListener.updatePosition(holder.getAdapterPosition());
-        holder.playerNameEditText.setText(mDataset[holder.getAdapterPosition()]);
+        holder.playerNameEditText.setText(mPlayerNameSet[holder.getAdapterPosition()]);
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mPlayerNameSet.length;
     }
 
     public static class SetPlayerNameViewHolder extends RecyclerView.ViewHolder {
@@ -73,7 +75,7 @@ public class SetPlayerNamesAdapter extends RecyclerView.Adapter<SetPlayerNamesAd
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            mDataset[position] = s.toString();
+            mPlayerNameSet[position] = s.toString();
         }
 
         @Override
