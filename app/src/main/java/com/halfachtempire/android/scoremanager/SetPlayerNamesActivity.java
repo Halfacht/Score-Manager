@@ -85,7 +85,8 @@ public class SetPlayerNamesActivity extends AppCompatActivity {
             contentValuesArray[i] = cv;
         }
 
-        getContentResolver().bulkInsert(ScoreContract.ScoreEntry.CONTENT_URI, contentValuesArray);
+        int x = getContentResolver().bulkInsert(ScoreContract.ScoreEntry.CONTENT_URI, contentValuesArray);
+        System.out.println("Number of lines inserted: " + x);
 
     } // close setPlayerNames()
 }

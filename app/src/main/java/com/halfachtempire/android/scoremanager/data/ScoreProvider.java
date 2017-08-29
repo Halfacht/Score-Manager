@@ -3,7 +3,6 @@ package com.halfachtempire.android.scoremanager.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,12 +11,16 @@ import android.support.annotation.NonNull;
 
 public class ScoreProvider extends ContentProvider {
 
+    // Constants used to match URI with the data they are looking for.
     public static final int CODE_PLAYERS = 100;
     public static final int CODE_PLAYER_WITH_ID = 101;
 
+    // The URI Matcher used by this content provider.
+    // The leading 's' in this variable name signifies that this UriMatcher is a static member variable.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private ScoreDbHelper mDbHelper;
 
+    // Creates a UriMatcher that will match each URi to the constants defined above.
     private static UriMatcher buildUriMatcher() {
 
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -29,10 +32,15 @@ public class ScoreProvider extends ContentProvider {
         return uriMatcher;
     }
 
+    /**
+     * Initialize content provider on startup.
+     *
+     * @return true if the provider was succesfully loader, false otherwise
+     */
     @Override
     public boolean onCreate() {
-        Context context = getContext();
-        mDbHelper = new ScoreDbHelper(context);
+
+        mDbHelper = new ScoreDbHelper(getContext());
         return true;
     }
 
@@ -49,11 +57,26 @@ public class ScoreProvider extends ContentProvider {
                 try {
                     for (ContentValues value : values) {
                         long id = db.insert(ScoreContract.ScoreEntry.TABLE_NAME, null, value);
+                        // test
+                        Cursor cursor = db.query(ScoreContract.ScoreEntry.TABLE_NAME,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                ScoreContract.ScoreEntry._ID);
+                        if (cursor.moveToFirst()) {
+                            do {
+                                String data = cursor.getString(cursor.getColumnIndex(ScoreContract.ScoreEntry.COLUMN_PLAYER_NAME));
+                                System.out.println(data);
+                            } while(cursor.moveToNext());
+                        }
 
                         if (id != -1) {
                             rowsInserted++;
                         }
                     }
+                    db.setTransactionSuccessful();
                 } finally {
                         db.endTransaction();
                 }
